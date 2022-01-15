@@ -79,7 +79,8 @@ NODE_PLATFORM_DIR       := $(ZOO)/thinnect.node-platform
 
 # ______________ Build components - sources and includes _______________________
 
-SOURCES += main.c
+SOURCES += main.c \
+            timer_handler.c
 
 # FreeRTOS
 FREERTOS_DIR ?= $(ZOO)/FreeRTOS-Kernel
@@ -114,6 +115,7 @@ SOURCES += \
     $(SILABS_SDKDIR)/platform/emlib/src/em_rmu.c \
     $(SILABS_SDKDIR)/platform/emlib/src/em_gpio.c \
     $(SILABS_SDKDIR)/platform/emlib/src/em_usart.c \
+    $(SILABS_SDKDIR)/platform/emlib/src/em_timer.c \
     $(SILABS_SDKDIR)/platform/emlib/src/em_msc.c
 
 # logging
