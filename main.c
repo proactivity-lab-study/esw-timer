@@ -1,7 +1,7 @@
 /**
  * @brief Example usage of Timer peripheral.
  *
- * EFR32MG12 Wireless Gecko Reference Manual (Timer p1105)
+ * EFR32MG12 Wireless Gecko Reference Manual (Timer p672)
  * https://www.silabs.com/documents/public/reference-manuals/efr32xg12-rm.pdf
  *
  * GPIO API documentation 
