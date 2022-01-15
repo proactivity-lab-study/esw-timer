@@ -1,11 +1,14 @@
 /**
  * @brief Example usage of Timer peripheral.
  *
+ * EFR32 Application Note on Timers
+ * https://www.silabs.com/documents/public/application-notes/AN0014.pdf
+ *
  * EFR32MG12 Wireless Gecko Reference Manual (Timer p672)
  * https://www.silabs.com/documents/public/reference-manuals/efr32xg12-rm.pdf
  *
- * GPIO API documentation 
- * https://docs.silabs.com/mcu/latest/efr32mg12/group-GPIO
+ * Timer API documentation 
+ * https://docs.silabs.com/mcu/latest/efr32mg12/group-TIMER
  * 
  * ARM RTOS API
  * https://arm-software.github.io/CMSIS_5/RTOS2/html/group__CMSIS__RTOS.html
@@ -29,6 +32,8 @@
 
 #include "loggers_ext.h"
 #include "logger_fwrite.h"
+
+#include "timer_handler.h"
 
 #include "loglevels.h"
 #define __MODUUL__ "main"
