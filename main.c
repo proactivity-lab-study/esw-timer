@@ -1,6 +1,44 @@
 /**
- * @brief Example usage of Timer peripheral.
+ * @brief Example usage of Timer peripheral. Play the beginning of Gaudeamus
+ *        on the buzzer.
  *
+ * Gaudeamus notes
+ * https://www.8notes.com/scores/21488.asp
+ * 
+ * Andante maestoso ~ 80 BPM -> 1 beat ~ 3/4s
+ * 
+ * F4 3/4 beat-> 562 ms
+ * C4 1/4 beat -> 188 ms
+ * C4 1 beat -> 750 ms
+ * F4 1 beat -> 750 ms
+ * D4 3/4 beat-> 562 ms
+ * D4 1/4 beat -> 188 ms
+ * D4 2 beats -> 1500 ms
+ * E4 3/4 beat-> 562 ms
+ * F4 1/4 beat -> 188 ms
+ * G4 1 beat -> 750 ms
+ * E4 1 beat -> 750 ms
+ * F4 1/2 beat -> 375 ms
+ * A4 1/2 beat -> 375 ms
+ * F4 2 beats -> 1500 ms
+
+
+ * Frequencies (37500 clock)
+ * C4 261,63 Hz -> 142 top
+ * D4 293,66 Hz -> 127 top
+ * E4 329,63 Hz -> 113 top
+ * F4 349,23 Hz -> 106
+ * G4 392 Hz -> 95
+ * A4 440 Hz -> 84
+ * B4 
+ * C5 523,25 -> 71
+ * D5 587,33 -> 63
+ * E5 659,25 -> 56
+ * F5 698,46 -> 53
+ * G5 783,99 -> 47
+ * A5 880 -> 42
+ * 
+ * 
  * EFR32 Application Note on Timers
  * https://www.silabs.com/documents/public/application-notes/AN0014.pdf
  *
@@ -71,18 +109,102 @@ void hp_loop ()
 
 static void buz_control_loop (void *args)
 {
-    uint32_t buz_counter = BUZ_TIMER0_TOP_VAL;
-    uint16_t frac = 1000;
-    float bfreq;
+    #define BUZZER_NOTE_C5  71 // TOP value at 37500 Hz
+    #define BUZZER_NOTE_D5  63 // TOP value at 37500 Hz
+    #define BUZZER_NOTE_E5  56 // TOP value at 37500 Hz
+    #define BUZZER_NOTE_F5  53 // TOP value at 37500 Hz
+    #define BUZZER_NOTE_G5  47 // TOP value at 37500 Hz
+    #define BUZZER_NOTE_A5  42 // TOP value at 37500 Hz
+    
+    #define BUZZER_HALF_NOTE    1500 // ms (andante maestoso)
+    #define BUZZER_QARTER_NOTE  750 // ms (andante maestoso)
+    #define BUZZER_1_8_NOTE     375 // ms (andante maestoso)
+    #define BUZZER_3_16_NOTE    562 // ms (andante maestoso)
+    #define BUZZER_1_16_NOTE    188 // ms (andante maestoso)
+    #define BUZZER_INTRA_NOTE   10 // ms (andante maestoso)
+    
+    uint8_t count = 1;
+    
+    timer0_set_top_val(0);
+    osDelay(3000);
     
     for (;;)
     {
-        osDelay(500);
-        buz_counter -= 2;
-        timer0_set_top_val(buz_counter);
-        bfreq = (float) timer_freq / (buz_counter + 1);
-        info1("Buzzer freq %i.%i Hz", (int32_t)bfreq, abs((int32_t)(bfreq*frac) - (((int32_t)bfreq) * frac)));
-        if(buz_counter <= 2)buz_counter = BUZ_TIMER0_TOP_VAL;
+        timer0_set_top_val(BUZZER_NOTE_F5);
+        info1("Gau");
+        osDelay((uint32_t)((float)BUZZER_3_16_NOTE/1000*osKernelGetTickFreq()));
+        
+        timer0_set_top_val(BUZZER_NOTE_C5);
+        info1("de");
+        osDelay((uint32_t)((float)BUZZER_1_16_NOTE/1000*osKernelGetTickFreq()));
+        
+        timer0_set_top_val(0);
+        osDelay(BUZZER_INTRA_NOTE);
+        
+        timer0_set_top_val(BUZZER_NOTE_C5);
+        info1("a-");
+        osDelay((uint32_t)((float)BUZZER_QARTER_NOTE/1000*osKernelGetTickFreq()));
+        
+        timer0_set_top_val(BUZZER_NOTE_F5);
+        info1("mus");
+        osDelay((uint32_t)((float)BUZZER_QARTER_NOTE/1000*osKernelGetTickFreq()));
+        
+        timer0_set_top_val(BUZZER_NOTE_D5);
+        info1("i-");
+        osDelay((uint32_t)((float)BUZZER_3_16_NOTE/1000*osKernelGetTickFreq()));
+        
+        timer0_set_top_val(0);
+        osDelay(BUZZER_INTRA_NOTE);
+        
+        timer0_set_top_val(BUZZER_NOTE_D5);
+        info1("g-");
+        osDelay((uint32_t)((float)BUZZER_1_16_NOTE/1000*osKernelGetTickFreq()));
+        
+        timer0_set_top_val(0);
+        osDelay(BUZZER_INTRA_NOTE);
+        
+        timer0_set_top_val(BUZZER_NOTE_D5);
+        info1("tur");
+        osDelay((uint32_t)((float)BUZZER_HALF_NOTE/1000*osKernelGetTickFreq()));
+        
+        timer0_set_top_val(BUZZER_NOTE_E5);
+        info1("ju-");
+        osDelay((uint32_t)((float)BUZZER_3_16_NOTE/1000*osKernelGetTickFreq()));
+        
+        timer0_set_top_val(BUZZER_NOTE_F5);
+        info1("ve-");
+        osDelay((uint32_t)((float)BUZZER_1_16_NOTE/1000*osKernelGetTickFreq()));
+        
+        timer0_set_top_val(BUZZER_NOTE_G5);
+        info1("nes");
+        osDelay((uint32_t)((float)BUZZER_QARTER_NOTE/1000*osKernelGetTickFreq()));
+        
+        timer0_set_top_val(BUZZER_NOTE_E5);
+        info1("dum");
+        osDelay((uint32_t)((float)BUZZER_QARTER_NOTE/1000*osKernelGetTickFreq()));
+        
+        timer0_set_top_val(BUZZER_NOTE_F5);
+        info1("su-");
+        osDelay((uint32_t)((float)BUZZER_1_8_NOTE/1000*osKernelGetTickFreq()));
+        
+        timer0_set_top_val(BUZZER_NOTE_A5);
+        info1("u-");
+        osDelay((uint32_t)((float)BUZZER_1_8_NOTE/1000*osKernelGetTickFreq()));
+        
+        timer0_set_top_val(BUZZER_NOTE_F5);
+        info1("mus");
+        osDelay((uint32_t)((float)BUZZER_HALF_NOTE/1000*osKernelGetTickFreq()));
+
+        timer0_set_top_val(0);
+        osDelay(BUZZER_INTRA_NOTE);
+
+        if(count == 2)
+        {
+            timer0_set_top_val(0);
+            count = 1;
+            osDelay(1500);
+        }
+        else count++;
     }
 }
 

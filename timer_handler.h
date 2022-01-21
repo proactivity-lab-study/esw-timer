@@ -18,7 +18,7 @@
 #define BUZZER_LOCATION         TIMER_ROUTELOC0_CC0LOC_LOC0 // PA0 route location for CC channel 0
 #define BUZ_TIMER0_CLOCK_DIV    timerPrescale1024 // Timer0 clock divider
 
-#define BUZ_TIMER0_TOP_VAL      100
+#define BUZ_TIMER0_TOP_VAL      0
 
 // Public functions
 void buzzer_gpio_init();
