@@ -1,6 +1,6 @@
 /**
  * @brief Example usage of Timer peripheral. Use Timer PWM functionality
- *        to generate signals for buzzer. 
+ *        to generate signals for vibration motor. 
  *
  * EFR32 Application Note on Timers
  * https://www.silabs.com/documents/public/application-notes/AN0014.pdf
@@ -35,6 +35,8 @@
 #include "logger_fwrite.h"
 
 #include "timer_handler.h"
+#include "em_cmu.h"
+#include "em_timer.h"
 
 #include "loglevels.h"
 #define __MODUUL__ "main"
@@ -45,7 +47,7 @@
 #include "incbin.h"
 INCBIN(Header, "header.bin");
 
-#define BUZZER_ON_OFF_TIME      3 // seconds
+#define MOTOR_ON_OFF_TIME      2 // seconds
 static void buz_control_loop (void *args);
 
 // Heartbeat thread, initialize Timer and print heartbeat messages.
@@ -54,10 +56,10 @@ void hp_loop ()
     #define ESWGPIO_HB_DELAY 10 // Heartbeat message delay, seconds
     
     // Initialize GPIO and Timer
-    buzzer_gpio_init();
-    timer0_init();
+    motor_gpio_init();
+    info1("PWM frequency %lu Hz", timer0_init());
     
-    // Create a thread for buzzer control.
+    // Create a thread for motor control.
     const osThreadAttr_t buz_thread_attr = { .name = "buz_onoff" };
     osThreadNew(buz_control_loop, NULL, &buz_thread_attr);
     
@@ -70,13 +72,14 @@ void hp_loop ()
 
 static void buz_control_loop (void *args)
 {
-    uint32_t duty_cycle = BUZ_PWM_DUTY_CYCLE;
+    uint32_t duty_cycle = MOT_PWM_DUTY_CYCLE;
+    
     for (;;)
     {
-        osDelay(BUZZER_ON_OFF_TIME*osKernelGetTickFreq());
+        osDelay(MOTOR_ON_OFF_TIME*osKernelGetTickFreq());
         
-        if(duty_cycle == BUZ_PWM_DUTY_CYCLE)duty_cycle = 0;
-        else duty_cycle = BUZ_PWM_DUTY_CYCLE;
+        if(duty_cycle == MOT_PWM_DUTY_CYCLE)duty_cycle = 0;
+        else duty_cycle = MOT_PWM_DUTY_CYCLE;
         
         timer0_set_pwm_dc(duty_cycle);
     }
