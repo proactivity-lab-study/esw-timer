@@ -44,17 +44,38 @@
 #include "incbin.h"
 INCBIN(Header, "header.bin");
 
+static void buz_control_loop (void *args);
+
 // Heartbeat thread, initialize Timer and print heartbeat messages.
 void hp_loop ()
 {
     #define ESWGPIO_HB_DELAY 10 // Heartbeat message delay, seconds
     
-    // TODO Initialize Timer.
+    // Initialize GPIO and Timer
+    buzzer_gpio_init();
+    timer0_init();
+    
+    // Create a thread for buzzer control.
+    const osThreadAttr_t buz_thread_attr = { .name = "buz_onoff" };
+    osThreadNew(buz_control_loop, NULL, &buz_thread_attr);    
     
     for (;;)
     {
         osDelay(ESWGPIO_HB_DELAY*osKernelGetTickFreq());
         info1("Heartbeat");
+    }
+}
+
+static void buz_control_loop (void *args)
+{
+    uint32_t buz_counter = BUZ_TIMER0_TOP_VAL;
+    
+    for (;;)
+    {
+        osDelay(500);
+        buz_counter -= 2;
+        timer0_set_top_val(buz_counter);
+        if(buz_counter <= 2)buz_counter = BUZ_TIMER0_TOP_VAL;
     }
 }
 
