@@ -22,7 +22,7 @@
 
 // Public functions
 void buzzer_gpio_init();
-void timer0_init();
+uint32_t timer0_init(void);
 void timer0_set_top_val(uint32_t tv);
 
 #endif // TIMER_HANDLER_H_ */

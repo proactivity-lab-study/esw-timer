@@ -44,6 +44,7 @@
 #include "incbin.h"
 INCBIN(Header, "header.bin");
 
+static uint32_t timer_freq;
 static void buz_control_loop (void *args);
 
 // Heartbeat thread, initialize Timer and print heartbeat messages.
@@ -53,7 +54,9 @@ void hp_loop ()
     
     // Initialize GPIO and Timer
     buzzer_gpio_init();
-    timer0_init();
+    timer_freq = timer0_init(); // No mutex, because only written once and buzzer thread hasn't been created yet
+    
+    info1("Timer frequency %lu Hz", timer_freq);
     
     // Create a thread for buzzer control.
     const osThreadAttr_t buz_thread_attr = { .name = "buz_onoff" };
@@ -69,12 +72,16 @@ void hp_loop ()
 static void buz_control_loop (void *args)
 {
     uint32_t buz_counter = BUZ_TIMER0_TOP_VAL;
+    uint16_t frac = 1000;
+    float bfreq;
     
     for (;;)
     {
         osDelay(500);
         buz_counter -= 2;
         timer0_set_top_val(buz_counter);
+        bfreq = (float) timer_freq / (buz_counter + 1);
+        info1("Buzzer freq %i.%i Hz", (int32_t)bfreq, abs((int32_t)(bfreq*frac) - (((int32_t)bfreq) * frac)));
         if(buz_counter <= 2)buz_counter = BUZ_TIMER0_TOP_VAL;
     }
 }

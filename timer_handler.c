@@ -25,7 +25,7 @@ void buzzer_gpio_init(void)
 /**
  * @brief Init TIMER0.
  */
-void timer0_init(void)
+uint32_t timer0_init(void)
 {
 	// Enable clocks.
     CMU_ClockEnable(cmuClock_TIMER0, true);
@@ -53,6 +53,8 @@ void timer0_init(void)
 	timerInit.enable = true; // Start timer after init.
 
 	TIMER_Init(TIMER0, &timerInit);
+	
+	return (uint32_t)(CMU_ClockFreqGet(cmuClock_TIMER0) / (uint32_t)(0x1 << BUZ_TIMER0_CLOCK_DIV));
 }
 
 void timer0_set_top_val(uint32_t tv)
