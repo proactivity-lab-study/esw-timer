@@ -34,6 +34,7 @@
 #include "logger_fwrite.h"
 
 #include "timer_handler.h"
+#include "em_timer.h"
 
 #include "loglevels.h"
 #define __MODUUL__ "main"
@@ -44,17 +45,41 @@
 #include "incbin.h"
 INCBIN(Header, "header.bin");
 
+void buzzer_loop(void *args);
+
 // Heartbeat thread, initialize Timer and print heartbeat messages.
 void hp_loop ()
 {
     #define ESWGPIO_HB_DELAY 10 // Heartbeat message delay, seconds
+    uint32_t timer_freq;
     
-    // TODO Initialize Timer.
+    // Initialize GPIO.
+    buzzer_gpio_init();
+    
+    // Initialize and configure Timer.
+    timer_freq = timer0_init();
+    info1("Timer freq %lu", timer_freq);
+    
+    // Create a thread for buzzer.
+    const osThreadAttr_t buz_thread_attr = { .name = "buz" };
+    osThreadNew(buzzer_loop, NULL, &buz_thread_attr);
+    
     
     for (;;)
     {
         osDelay(ESWGPIO_HB_DELAY*osKernelGetTickFreq());
         info1("Heartbeat");
+    }
+}
+
+void buzzer_loop(void *args)
+{
+    for (;;)
+    {
+        osDelay(1000*osKernelGetTickFreq());
+        TIMER_TopBufSet(TIMER0, 50);
+        osDelay(1000*osKernelGetTickFreq());
+        TIMER_TopBufSet(TIMER0, 100);
     }
 }
 
