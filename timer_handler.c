@@ -34,26 +34,30 @@ uint32_t timer0_init(void)
     // Init compare mode init and configuring.
     TIMER_InitCC_TypeDef ccInit = TIMER_INITCC_DEFAULT;
     ccInit.cofoa = timerOutputActionToggle;
-    ccInit.mode = timerCCModeCompare;
+    ccInit.mode = timerCCModePWM;
     
     TIMER_InitCC(TIMER0, 0, &ccInit);
     
     TIMER_TopSet(TIMER0, 100);
+    TIMER_CompareSet(TIMER0, 0, 75);
     
     TIMER0->ROUTEPEN = 1; // TIMER_ROUTEPEN_CC0PEN
     TIMER0->ROUTELOC0 = TIMER_ROUTELOC0_CC0LOC_LOC0; // = 0
     
     // Timer general init and config.
     TIMER_Init_TypeDef timerInit = TIMER_INIT_DEFAULT;
-    timerInit.prescale = timerPrescale1024;
+    timerInit.prescale = timerPrescale256;
     timerInit.enable = true;
     
     TIMER_Init(TIMER0, &timerInit);
     
-    return (uint32_t) (CMU_ClockFreqGet(cmuClock_TIMER0) / (uint32_t) (0x01 << timerPrescale1024));
+    return (uint32_t) (CMU_ClockFreqGet(cmuClock_TIMER0) / (uint32_t) (0x01 << timerPrescale256));
 }
 
-
+void duty_cycle(uint32_t val)
+{
+    TIMER_CompareBufSet(TIMER0, 0, val);
+}
 
 
 
