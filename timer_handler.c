@@ -36,7 +36,7 @@ uint32_t timer0_init(void)
     ccInit.cofoa = timerOutputActionToggle;
     ccInit.mode = timerCCModeCompare;
     
-    TIMER_InitCC(TIMER0, 0, ccInit);
+    TIMER_InitCC(TIMER0, 0, &ccInit);
     
     TIMER_TopSet(TIMER0, 100);
     
@@ -48,7 +48,7 @@ uint32_t timer0_init(void)
     timerInit.prescale = timerPrescale1024;
     timerInit.enable = true;
     
-    TIMER_Init(TIMER0, timerInit);
+    TIMER_Init(TIMER0, &timerInit);
     
     return (uint32_t) (CMU_ClockFreqGet(cmuClock_TIMER0) / (uint32_t) (0x01 << timerPrescale1024));
 }
