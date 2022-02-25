@@ -61,7 +61,7 @@ void hp_loop ()
     info1("Timer freq %lu", timer_freq);
     
     // Create a thread for buzzer.
-    const osThreadAttr_t motor_thread_attr = { .name = "buz" };
+    const osThreadAttr_t motor_thread_attr = { .name = "mot" };
     osThreadNew(motor_loop, NULL, &motor_thread_attr);
     
     
@@ -74,16 +74,22 @@ void hp_loop ()
 
 void motor_loop(void *args)
 {
+    #define DUTY_CYCLE_DELAY 2000 // ms
+    
     for (;;)
     {
-        osDelay(1000*osKernelGetTickFreq());
+        osDelay(DUTY_CYCLE_DELAY*osKernelGetTickFreq()/1000);
         duty_cycle(50);
-        osDelay(1000*osKernelGetTickFreq());
+        info1("dc 50");
+        osDelay(DUTY_CYCLE_DELAY*osKernelGetTickFreq()/1000);
         duty_cycle(25);
-        osDelay(1000*osKernelGetTickFreq());
+        info1("dc 25");
+        osDelay(DUTY_CYCLE_DELAY*osKernelGetTickFreq()/1000);
         duty_cycle(0);
-        osDelay(1000*osKernelGetTickFreq());
+        info1("dc 0");
+        osDelay(DUTY_CYCLE_DELAY*osKernelGetTickFreq()/1000);
         duty_cycle(75);
+        info1("dc 75");
     }
 }
 
